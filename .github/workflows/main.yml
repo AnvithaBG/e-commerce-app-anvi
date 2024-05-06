@@ -1,37 +1,28 @@
-name: Build Angular App
+name: Node.js CI
 
 on:
-   push:
-    branches: [ "master" ]
+  push:
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
       with:
-        node-version: '14'
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Build Angular app
-      run: npm run build -- --prod
-
-    - name: Archive distribution
-      uses: montudor/action-zip@v0.3.0
-      with:
-        args: dist e-commerce-app.zip
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: e-commerce-app
-        path: e-commerce-app.zip
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
