@@ -1,0 +1,36 @@
+name: Build Angular App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Angular app
+      run: npm run build -- --prod
+
+    - name: Archive distribution
+      uses: montudor/action-zip@v0.3.0
+      with:
+        args: dist e-commerce-app.zip
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: e-commerce-app
+        path: e-commerce-app.zip
