@@ -3,23 +3,34 @@ name: Node.js CI
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
+      - name: Install Node.js and Angular CLI
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install Dependencies
+        run: npm install
 
-    - name: Rebuild the index.js file
-      run: npm run build --prod
+      - name: Build Angular App
+        run: npm run build
+
+      - name: Create Zip File
+        run: |
+          cd dist/e-commerce-app
+          zip -r e-commerce-app.zip .
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: e-commerce-app
+          path: dist/e-commerce-app/e-commerce-app.zip
