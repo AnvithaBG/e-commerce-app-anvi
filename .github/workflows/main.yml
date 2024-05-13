@@ -34,3 +34,20 @@ jobs:
         with:
           name: e-commerce-app
           path: dist/e-commerce-app/e-commerce-app.zip
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Angular App
+        run: npm run build
+
+      - name: Create Zip File
+        run: |
+          cd dist/e-commerce-app
+          zip -r e-commerce-app.zip .
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: e-commerce-app
+          path: dist/e-commerce-app/e-commerce-app.zip
